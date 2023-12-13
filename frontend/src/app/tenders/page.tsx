@@ -1,3 +1,5 @@
+"use client"
+import useUserAddress from '@/hooks/useUserAddress';
 import Link from 'next/link';
 import React from 'react'
 
@@ -8,7 +10,10 @@ const tenderData = [
     // Add more dummy data as needed
   ];
 
+
 const Tenders = () => {
+  const {state,userAddress} = useUserAddress();
+
 
     
   return (
@@ -19,7 +24,7 @@ const Tenders = () => {
     <div className="bg-white p-6 rounded-md shadow-md">
     <h2 className="text-xl font-bold mb-2">Your Account</h2>
     <p className="text-gray-600 truncate">
-        <span className="md:block">0x1234567890123456789012345678901234567890123456789012345678901234</span>
+        <span className="md:block">{userAddress}</span>
     </p>
     </div>
     </div>
