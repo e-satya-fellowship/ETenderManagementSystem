@@ -13,6 +13,7 @@ const AddTender: React.FC = () => {
   const [formData, setFormData] = useState({
     title: '',
     budget: 0,
+    estimatedCompletionTime: 0,
     deadline: Date.now().toString() ,
     description: '',
   });
@@ -33,7 +34,7 @@ const AddTender: React.FC = () => {
         }
       // Convert the date string to a Unix timestamp or use a suitable format
       const deadlineTimestamp = Date.parse(formData?.deadline);
-      const upload = await contract?.issueTender(formData.title,formData.description, deadlineTimestamp,formData.budget);
+      const upload = await contract?.issueTender(formData.title,formData.description, deadlineTimestamp,formData.budget, formData.estimatedCompletionTime);
       await upload.wait();
       toast.success('Contract Issued!');
       router.push("/tenders")
@@ -113,10 +114,26 @@ const AddTender: React.FC = () => {
           />
         </div>
 
+        {/* Estimated Time Required */}
+        <div className="mb-4">
+          <label htmlFor="estimatedCompletionTime" className="block text-sm font-medium text-gray-600">
+            Estimated Project Completion Time in Months
+          </label>
+          <input
+            type="number"
+            id="estimatedCompletionTime"
+            name="estimatedCompletionTime"
+            value={formData.estimatedCompletionTime}
+            onChange={handleInputChange}
+            className="mt-1 p-2 w-full border rounded-md"
+            required
+          />
+        </div>
+
         {/* Deadline Field */}
         <div className="mb-4">
           <label htmlFor="deadline" className="block text-sm font-medium text-gray-600">
-            Deadline
+            Tender Deadline
           </label>
           <input
             type="date"

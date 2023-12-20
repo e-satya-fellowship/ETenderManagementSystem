@@ -1,7 +1,12 @@
 "use client"
 import useUserAddress from '@/hooks/useUserAddress';
 import Link from 'next/link';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import contractAddress from "../../contracts/contract-address.json"
+import { useRouter } from 'next/navigation';
+import Spinner from '../components/Spinner';
+import TenderDetail from '../components/TenderDetail';
+
 
 const tenderData = [
     { id: 1, title: 'Software Development', deadline: '2023-12-15' },
@@ -13,11 +18,43 @@ const tenderData = [
 
 const Tenders = () => {
   const {state,userAddress} = useUserAddress();
+  const { contract } = state;
+  const DeployerAddress = contractAddress.DeployerAddress.toLowerCase();
+  const router = useRouter()
+  const [allTenders, setAllTenders] = useState<any[]>([]);
+  const [selectedTender, setSelectedTender] = useState<any | null>(null);
+
+  if(userAddress === "Other Network") router.push("/")
+
+  useEffect(() => {
+    const getAllTenders = async () => {
+      if (contract){
+        const [tenderIds, tenders] = await contract.viewAllTenders();
+        setAllTenders(tenders);
+      }    
+    };
+    contract && getAllTenders();
+    
+  }, [contract])
+
+
+   // Function to format timestamp to a readable date
+   const formatDeadline = (timestamp:any) => {
+    const date = new Date(Number(timestamp));
+    return date.toLocaleString();
+  };
+
+  const handleViewDetail = (tender: any) => {
+    setSelectedTender(tender);
+  };
+
 
 
     
   return (
-    <div className="p-8 bg-gray-200 min-h-screen">
+    <>
+    {userAddress ? (
+        <div className="p-8 bg-gray-200 min-h-screen">
 
         {/* User Account Details Section */}
     <div className="mb-6 text-center">
@@ -28,32 +65,49 @@ const Tenders = () => {
     </p>
     </div>
     </div>
+    {userAddress === DeployerAddress && 
     <div className="flex justify-end mb-4">
-      <Link href="/addtender">
-        <button className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-md transition duration-300">
-          Add Tender
-        </button>
-      </Link>
-    </div>
+    <Link href="/addtender">
+      <button className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-md transition duration-300">
+        Add Tender
+      </button>
+    </Link>
+  </div>
+   }
+    
     <h1 className="text-3xl font-bold mb-6">List of Tenders</h1>
 
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {/* Map through your tender data and create cards */}
-      {tenderData.map((tender) => (
-        <div key={tender.id} className="bg-white p-4 rounded-md shadow-md">
+      {allTenders.map((tender,index) => (
+        <div key={index} className="bg-white p-4 rounded-md shadow-md">
           <h2 className="text-lg font-semibold mb-2">{tender.title}</h2>
-          <p className="text-gray-600 mb-2">Deadline: {tender.deadline}</p>
-          <Link href={`/tenderdetail?id=552252535`}>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-300">
+          <p className="text-gray-600 mb-2">Deadline: {formatDeadline(tender.deadline)}</p>
+          <button
+          onClick={() => handleViewDetail(tender)} 
+          className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-300">
             View Detail
           </button>
-          </Link>
         </div>
       ))}
     </div>
-  </div>
-  )
+    {selectedTender && <TenderDetail tender={selectedTender} onClose={() => setSelectedTender(null)} />}
+
+
+    </div>
+    ) : (
+      <div className='bg-gray-200 min-h-screen p-4'>
+        Loading....
+      </div>
+    )}
+  </>
+    
+ 
+    
+   
+  );
 }
 
 export default Tenders
+

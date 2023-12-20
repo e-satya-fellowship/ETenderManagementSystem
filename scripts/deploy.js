@@ -8,11 +8,11 @@ async function main() {
     const tenderManagementSystem = await ethers.deployContract("TenderManagementSystem");
     const contract_address = await tenderManagementSystem.getAddress()
     console.log("Contract address:",contract_address)
-    saveFrontendFiles(contract_address);
+    saveFrontendFiles(deployer.address,contract_address);
 
   }
 
-   function saveFrontendFiles(contract_address) {
+   function saveFrontendFiles(deployer_address,contract_address) {
     const fs = require("fs");
     const contractsDir = path.join(__dirname, "..", "frontend", "src", "contracts");
   
@@ -22,7 +22,7 @@ async function main() {
   
     fs.writeFileSync(
       path.join(contractsDir, "contract-address.json"),
-      JSON.stringify({ TenderManagementSystem: contract_address }, undefined, 2)
+      JSON.stringify({ DeployerAddress: deployer_address,TenderManagementSystem: contract_address }, undefined, 2)
     );
   
     const TenderManagementSystemArtifact = artifacts.readArtifactSync("TenderManagementSystem");
