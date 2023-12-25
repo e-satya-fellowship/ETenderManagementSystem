@@ -111,7 +111,7 @@ contract TenderManagementSystem {
         currentTender.status = TenderStatus.Closed;
 
         // call determineWinner function
-        currentTender.winner = determineWinner(_tenderId);
+        // currentTender.winner = determineWinner(_tenderId);
 
         emit TenderClosed(_tenderId, currentTender.winner);
     }

@@ -6,14 +6,18 @@ import contractAddress from "../../contracts/contract-address.json"
 import { useRouter } from 'next/navigation';
 import Spinner from '../components/Spinner';
 import TenderDetail from '../components/TenderDetail';
+import EligibleBidderList from '../components/EligibleBidderList';
 
-
-const tenderData = [
-    { id: 1, title: 'Software Development', deadline: '2023-12-15' },
-    { id: 2, title: 'Construction Project', deadline: '2023-12-31' },
-    { id: 3, title: 'Graphic Design Services', deadline: '2023-12-20' },
-    // Add more dummy data as needed
-  ];
+function getStatusString(status:string) {
+  switch (status) {
+      case "0":
+          return "Open";
+      case "1":
+          return "Closed";
+      default:
+          return "Unknown";
+  }
+}
 
 
 const Tenders = () => {
@@ -23,6 +27,11 @@ const Tenders = () => {
   const router = useRouter()
   const [allTenders, setAllTenders] = useState<any[]>([]);
   const [selectedTender, setSelectedTender] = useState<any | null>(null);
+  const [selectedTenderId, setSelectedTenderId] = useState<any | null>(null);
+  const [showEligibleBidderList, setShowEligibleBidderList] = useState(false)
+
+  console.log("allTenders:",allTenders);
+  
 
   if(userAddress === "Other Network") router.push("/")
 
@@ -48,6 +57,13 @@ const Tenders = () => {
     setSelectedTender(tender);
   };
 
+ const handleShowEligibleBidders = (tenderId:any)=>{
+  console.log("handleShowEligibleBidders")
+  setShowEligibleBidderList(true);
+  setSelectedTenderId(tenderId);
+  return <EligibleBidderList tenderId={tenderId} onClose={() => setShowEligibleBidderList(false)} />
+
+ }
 
 
     
@@ -79,7 +95,10 @@ const Tenders = () => {
 
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {/* Map through your tender data and create cards */}
+      {allTenders && allTenders.length > 0 ?
+      (
+        <>
+         {/* Map through your tender data and create cards */}
       {allTenders.map((tender,index) => (
         <div key={index} className="bg-white p-4 rounded-md shadow-md">
           <h2 className="text-lg font-semibold mb-2">{tender.title}</h2>
@@ -89,10 +108,27 @@ const Tenders = () => {
           className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-300">
             View Detail
           </button>
+          {getStatusString(tender.status.toString()) === "Closed" &&
+          <button
+          onClick={()=>handleShowEligibleBidders(tender.id)} 
+          className=" bg-orange-500 hover:bg-orange-700 text-white px-4 py-2 rounded-md transition duration-300 ml-2">
+            View Result
+          </button>
+          }
         </div>
+
       ))}
+      </>
+      ):
+    (
+      <div>No Tenders...</div>
+      )
+    }
+     
     </div>
     {selectedTender && <TenderDetail tender={selectedTender} onClose={() => setSelectedTender(null)} />}
+    {showEligibleBidderList && <EligibleBidderList tenderId={selectedTenderId} onClose={() => setShowEligibleBidderList(false)} />}
+
 
 
     </div>

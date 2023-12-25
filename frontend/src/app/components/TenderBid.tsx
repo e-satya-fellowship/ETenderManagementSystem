@@ -15,6 +15,9 @@ const TenderBid = ({ tenderId, onClose }:any) => {
       estimatedCompletionTime: 0,
     });
 
+    // console.log("tenderIdBid:",tenderId)
+
+
     // Function to handle form field changes
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
@@ -39,7 +42,7 @@ const TenderBid = ({ tenderId, onClose }:any) => {
         // console.log("newBudget:",budgetAsString)
         // console.log("estimatedCompletionTime:",estimatedCompletionTime)
     
-        const bid = await contract?.placeBid(tenderId,estimatedCompletionTime,formData.budget);
+        const bid = await contract?.placeBid(tenderId,formData.estimatedCompletionTime,formData.budget);
         await bid.wait();
         toast.success('Bid placed successfully!');
         // router.push("/tenders")
