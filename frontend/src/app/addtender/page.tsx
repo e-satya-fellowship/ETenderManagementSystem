@@ -5,6 +5,8 @@ import useUserAddress from '@/hooks/useUserAddress';
 import toast from 'react-hot-toast';
 import Spinner from '../components/Spinner';
 import { useRouter } from 'next/navigation';
+import contractAddress from "../../contracts/contract-address.json"
+
 
 const AddTender: React.FC = () => {
   const [isSpinnerLoading, setIsSpinnerLoading] = useState(false);
@@ -19,7 +21,11 @@ const AddTender: React.FC = () => {
   });
   const {state,userAddress} = useUserAddress();
   const { contract } = state;
+  const DeployerAddress = contractAddress.DeployerAddress.toLowerCase();
+
   const router = useRouter();
+
+  if(userAddress === "Other Network" ) router.push("/")
 
   // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,6 +67,10 @@ const AddTender: React.FC = () => {
   };
 
   return (
+    <>
+    {userAddress && userAddress === DeployerAddress ?
+      (
+    
     <div className="p-8 bg-gray-200 min-h-screen">
            {/* User Account Details Section */}
     <div className="mb-6 text-center">
@@ -170,6 +180,13 @@ const AddTender: React.FC = () => {
         </button>
       </form>
     </div>
+      )
+    :(
+      <div className='bg-gray-200 min-h-screen p-4'>
+      Forbidden....
+    </div>
+    )}
+    </>
   );
 };
 

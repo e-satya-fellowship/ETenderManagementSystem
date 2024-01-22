@@ -25,12 +25,15 @@ const Tenders = () => {
   const { contract } = state;
   const DeployerAddress = contractAddress.DeployerAddress.toLowerCase();
   const router = useRouter()
-  const [allTenders, setAllTenders] = useState<any[]>([]);
+  const [allTenders, setAllTenders] = useState<any[] | null>(null);
   const [selectedTender, setSelectedTender] = useState<any | null>(null);
   const [selectedTenderId, setSelectedTenderId] = useState<any | null>(null);
   const [showEligibleBidderList, setShowEligibleBidderList] = useState(false)
 
   console.log("allTenders:",allTenders);
+  console.log("userAddress:",userAddress);
+
+  // if(!allTenders) return null
   
 
   if(userAddress === "Other Network") router.push("/")
@@ -69,27 +72,27 @@ const Tenders = () => {
     
   return (
     <>
-    {userAddress ? (
+    {allTenders && userAddress ? (
         <div className="p-8 bg-gray-200 min-h-screen">
 
         {/* User Account Details Section */}
-    <div className="mb-6 text-center">
-    <div className="bg-white p-6 rounded-md shadow-md">
-    <h2 className="text-xl font-bold mb-2">Your Account</h2>
-    <p className="text-gray-600 truncate">
-        <span className="md:block">{userAddress}</span>
-    </p>
-    </div>
-    </div>
-    {userAddress === DeployerAddress && 
-    <div className="flex justify-end mb-4">
-    <Link href="/addtender">
-      <button className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-md transition duration-300">
-        Add Tender
-      </button>
-    </Link>
-  </div>
-   }
+        <div className="mb-6 text-center">
+        <div className="bg-white p-6 rounded-md shadow-md">
+        <h2 className="text-xl font-bold mb-2">Your Account</h2>
+        <p className="text-gray-600 truncate">
+            <span className="md:block">{userAddress}</span>
+        </p>
+        </div>
+        </div>
+        {userAddress === DeployerAddress && 
+        <div className="flex justify-end mb-4">
+        <Link href="/addtender">
+          <button className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-md transition duration-300">
+            Add Tender
+          </button>
+        </Link>
+      </div>
+      }
     
     <h1 className="text-3xl font-bold mb-6">List of Tenders</h1>
 

@@ -85,11 +85,13 @@ const TenderDetail = ({ tender, onClose }:any) => {
         }
         {userAddress === DeployerAddress && 
         <>
+         {getStatusString(tender.status.toString()) === "Closed" &&
             <button
             onClick={()=>setShowBidderList(true)}
              className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-300">
               View Applied Bidders
             </button>
+          }
             {getStatusString(tender.status.toString()) === "Open" && 
             <button
             onClick={()=>closeTender(tender.id)}

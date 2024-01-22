@@ -118,26 +118,22 @@ contract TenderManagementSystem {
 
     function determineWinner(uint _tenderId) internal view returns (address) {
         require(tenders[_tenderId].status == TenderStatus.Closed, "Tender is not closed yet");
-
         Bid[] memory bids = eligibleBidders[_tenderId];
         require(bids.length > 0, "No eligible bidders");
-
         address winningBidder = address(0);
         uint winningBidAmount = type(uint).max;
         uint winningEstimatedCompletionTime = type(uint).max;
-
         // Iterate through eligible bidders
         for (uint i = 0; i < bids.length; i++) {
             Bid memory currentBid = bids[i];
-
             // Check if the current bidder has a lower bid amount or earlier estimatedCompletionTime
-            if (currentBid.bidAmount < winningBidAmount || (currentBid.bidAmount == winningBidAmount && currentBid.estimatedCompletionTime < winningEstimatedCompletionTime)) {
+            if (currentBid.bidAmount < winningBidAmount || (currentBid.bidAmount == winningBidAmount && 
+            currentBid.estimatedCompletionTime < winningEstimatedCompletionTime)) {
                 winningBidder = currentBid.bidder;
                 winningBidAmount = currentBid.bidAmount;
                 winningEstimatedCompletionTime = currentBid.estimatedCompletionTime;
             }
         }
-
         return winningBidder;
     }
 }
